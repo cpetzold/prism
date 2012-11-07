@@ -4,6 +4,12 @@
   [seq elm]  
   (some #(= elm %) seq))
 
+(defn in-sub?
+  [map keys elm]
+  (in?
+    (vals (select-keys map keys))
+    elm))
+
 (defn log [& more]
   (.apply (.-log js/console) js/console
     (into-array (map #(if (satisfies? cljs.core.ISeqable %)
