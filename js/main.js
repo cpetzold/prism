@@ -16351,8 +16351,7 @@ prism.core.set_top_offset = function() {
   return cljs.core.truth_(cljs.core.deref.call(null, prism.core.selected_story)) ? prism.core.scroll_to_story.call(null, cljs.core.deref.call(null, prism.core.selected_story)) : null
 };
 prism.core.handle_resize = function() {
-  prism.core.set_window_size.call(null);
-  return prism.core.set_top_offset.call(null)
+  return prism.core.set_window_size.call(null)
 };
 prism.core.handle_scroll = function() {
   return cljs.core.truth_(cljs.core.deref.call(null, prism.core.prevent_scroll_fire)) ? cljs.core.reset_BANG_.call(null, prism.core.prevent_scroll_fire, !1) : jayq.core.remove_class.call(null, prism.core.$stories, prism.core.focus_class)
@@ -16375,7 +16374,6 @@ prism.core.load_stories = function(a, b) {
 };
 prism.core.main = function() {
   prism.core.set_window_size.call(null);
-  prism.core.set_top_offset.call(null);
   prism.core.load_stories.call(null, "news/home", function() {
     return prism.core.select_story.call(null, jayq.core.$.call(null, "#stories .story:first-child"))
   });

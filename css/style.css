@@ -51,15 +51,9 @@ a {
 }
 .focus .story {
   opacity: 0.1;
-  -webkit-filter: grayscale(1);
-  -moz-filter: grayscale(1);
-  filter: grayscale(1);
 }
 .focus .story.selected {
   opacity: 1;
-  -webkit-filter: none;
-  -moz-filter: none;
-  filter: none;
 }
 .story-info {
   color: #aaa;

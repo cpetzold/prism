@@ -87,8 +87,8 @@
 
 (defn handle-resize
   [e]
-  (set-window-size)
-  (set-top-offset))
+  (set-window-size))
+  ; (set-top-offset))
 
 (defn handle-scroll
   [e]
@@ -120,7 +120,7 @@
 
 (defn main []
   (set-window-size)
-  (set-top-offset)
+  ; (set-top-offset)
   (load-stories "news/home"
     (fn [stories]
       (select-story ($ "#stories .story:first-child"))))
