@@ -15576,21 +15576,6 @@ goog.net.Jsonp.addPayloadToUri_ = function(a, b) {
 prism.templates = {};
 prism.templates.min_image_width = 500;
 prism.templates.max_image_height = 500;
-prism.templates.stories = function(a) {
-  return"" + cljs.core.str(cljs.core.apply.call(null, cljs.core.str, function() {
-    return function c(a) {
-      return new cljs.core.LazySeq(null, !1, function() {
-        for(;;) {
-          if(cljs.core.seq.call(null, a)) {
-            var e = cljs.core.first.call(null, a);
-            return cljs.core.cons.call(null, "" + cljs.core.str(hiccups.runtime.render_html.call(null, prism.templates.story.call(null, e))), c.call(null, cljs.core.rest.call(null, a)))
-          }
-          return null
-        }
-      }, null)
-    }.call(null, a)
-  }()))
-};
 prism.templates.story = function(a) {
   return"" + cljs.core.str(hiccups.runtime.render_html.call(null, function() {
     var b = a.url, c = a.title, d = a.feed, e = cljs.core.map.call(null, cljs.core.first, a.topics), f = a.img, g = cljs.core.truth_(f) ? f.size.width >= prism.templates.min_image_width : f, h = cljs.core.truth_(f) ? f.size.height >= prism.templates.max_image_height : null;
@@ -15609,6 +15594,21 @@ prism.templates.story = function(a) {
       }.call(null, e)
     }()], !0), cljs.core.PersistentVector.fromArray(["\ufdd0'div.story-content", cljs.core.PersistentVector.fromArray(["\ufdd0'a.story-title", cljs.core.ObjMap.fromObject(["\ufdd0'href", "\ufdd0'target"], {"\ufdd0'href":b, "\ufdd0'target":"_blank"}), cljs.core.PersistentVector.fromArray(["\ufdd0'h2", c], !0)], !0), cljs.core.truth_(g) ? cljs.core.PersistentVector.fromArray(["\ufdd0'a.story-image", cljs.core.ObjMap.fromObject(["\ufdd0'href", "\ufdd0'target"], {"\ufdd0'href":b, "\ufdd0'target":"_blank"}), 
     cljs.core.PersistentVector.fromArray(["\ufdd0'img", cljs.core.ObjMap.fromObject(["\ufdd0'src"], {"\ufdd0'src":f.url})], !0)], !0) : null, cljs.core.PersistentVector.fromArray(["\ufdd0'p.story-text", cljs.core.truth_(g) ? prism.utils.truncate.call(null, a.text, 200, "\u2026") : prism.utils.truncate.call(null, a.text, 800, "\u2026")], !0), cljs.core.PersistentVector.fromArray(["\ufdd0'div.clear"], !0)], !0)], !0)
+  }()))
+};
+prism.templates.stories = function(a) {
+  return"" + cljs.core.str(cljs.core.apply.call(null, cljs.core.str, function() {
+    return function c(a) {
+      return new cljs.core.LazySeq(null, !1, function() {
+        for(;;) {
+          if(cljs.core.seq.call(null, a)) {
+            var e = cljs.core.first.call(null, a);
+            return cljs.core.cons.call(null, "" + cljs.core.str(hiccups.runtime.render_html.call(null, prism.templates.story.call(null, e))), c.call(null, cljs.core.rest.call(null, a)))
+          }
+          return null
+        }
+      }, null)
+    }.call(null, a)
   }()))
 };
 jayq.core = {};
@@ -16348,7 +16348,7 @@ prism.core.set_window_size = function() {
 prism.core.set_top_offset = function() {
   var a = 900 > (new cljs.core.Keyword("\ufdd0'height")).call(null, cljs.core.deref.call(null, prism.core.window_size)) ? 0 : 100;
   cljs.core.reset_BANG_.call(null, prism.core.top_offset, a);
-  return prism.core.scroll_to_story.call(null, cljs.core.deref.call(null, prism.core.selected_story))
+  return cljs.core.truth_(cljs.core.deref.call(null, prism.core.selected_story)) ? prism.core.scroll_to_story.call(null, cljs.core.deref.call(null, prism.core.selected_story)) : null
 };
 prism.core.handle_resize = function() {
   prism.core.set_window_size.call(null);
@@ -16374,6 +16374,8 @@ prism.core.load_stories = function(a, b) {
   })
 };
 prism.core.main = function() {
+  prism.core.set_window_size.call(null);
+  prism.core.set_top_offset.call(null);
   prism.core.load_stories.call(null, "news/home", function() {
     return prism.core.select_story.call(null, jayq.core.$.call(null, "#stories .story:first-child"))
   });

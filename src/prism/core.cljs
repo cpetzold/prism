@@ -47,13 +47,12 @@
 
 (defn select-story
   [$story]
-  (if-not (empty? $story)
-    (do
-      (remove-class ($ (str "." selected-class)) selected-class)
-      (add-class $stories focus-class)
-      (add-class $story selected-class)
-      (reset! selected-story $story)
-      (scroll-to-story $story))))
+  (when-not (empty? $story)
+    (remove-class ($ (str "." selected-class)) selected-class)
+    (add-class $stories focus-class)
+    (add-class $story selected-class)
+    (reset! selected-story $story)
+    (scroll-to-story $story)))
 
 (defn select-prev-story []
   (select-story
@@ -67,8 +66,7 @@
   [e]
   (let [code (.-keyCode e)]
     (log code)
-    (if (in? key-set code)
-      (.preventDefault e))
+    (when (in? key-set code) (.preventDefault e))
     (condp (partial in-sub? key-map) code
       ; Up
       [:up :k] (select-prev-story)
@@ -85,7 +83,7 @@
   (let [window-height (:height @window-size)
         offset (if (< window-height 900) 0 100)]
     (reset! top-offset offset)
-    (scroll-to-story @selected-story)))
+    (when @selected-story (scroll-to-story @selected-story))))
 
 (defn handle-resize
   [e]
@@ -121,6 +119,8 @@
         (callback stories)))))
 
 (defn main []
+  (set-window-size)
+  (set-top-offset)
   (load-stories "news/home"
     (fn [stories]
       (select-story ($ "#stories .story:first-child"))))

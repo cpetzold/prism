@@ -6,9 +6,6 @@
 (def min-image-width 500)
 (def max-image-height 500)
 
-(hiccups/defhtml stories [ss]
-  (for [s ss] (story s)))
-
 (hiccups/defhtml story
   [s]
   (let 
@@ -39,3 +36,6 @@
             (truncate (.-text s) 200 "…")
             (truncate (.-text s) 800 "…"))]
         [:div.clear]]]))
+
+(hiccups/defhtml stories [ss]
+  (for [s ss] (story s)))

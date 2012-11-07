@@ -11,6 +11,29 @@ a {
 .clear {
   clear: both;
 }
+@-webkit-keyframes rotate {
+  0% {
+    -webkit-filter: hue-rotate(0deg);
+    -moz-filter: hue-rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+
+  100% {
+    -webkit-filter: hue-rotate(360deg);
+    -moz-filter: hue-rotate(360deg);
+    filter: hue-rotate(360deg);
+  }
+}
+#logo {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  top: 30px;
+  left: 50%;
+  margin-left: -400px;
+  background: url("http://cdn.getprismatic.com/cdn/img/brand/prismatic-logo-header__5b204905.png") no-repeat;
+  -webkit-animation: rotate 5s infinite alternate;
+}
 #stories {
   max-width: 600px;
   margin: 0 auto;
