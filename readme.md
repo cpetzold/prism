@@ -1,17 +1,17 @@
-# prismatic-cljs
+# Prism
 
-A website written in noir. 
+## Compile
 
-## Usage
+### ClojureScript
 
 ```bash
 lein deps
-lein run
+lein cljsbuild auto
 ```
 
-## License
+### Stylus
 
-Copyright (C) 2011 FIXME
-
-Distributed under the Eclipse Public License, the same as Clojure.
-
+```bash
+npm install -g stylus
+stylus -o css styl -w
+```
