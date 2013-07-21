@@ -29,6 +29,15 @@
     (dommy/listen! el type #(put! c %))
     c))
 
+;; callback version
+(dommy/listen!
+ js/window :click
+ (fn []
+   (request*
+    "//api.getprismatic.com/news/home"
+    #(js/console.log %))))
+
+;; code.async sequential version
 (let [click (listen js/window :click)]
   (go
    (while true
