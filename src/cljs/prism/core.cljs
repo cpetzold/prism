@@ -1,14 +1,26 @@
 (ns prism.core
   (:require-macros
    [cljs.core.async.macros :refer [go alt!]]
-   [dommy.macros :refer [node]])
+   [dommy.macros :refer [node deftemplate]])
   (:require
-   [cljs.core.async :refer [chan put! <! !>]]
+   [clojure.string :refer [join]]
+   [cljs.core.async :refer [chan put! take! close! <! >!]]
    [dommy.core :as dommy]))
+
+(def +api-host+ "//api.getprismatic.com")
+
+(defn map->query-string
+  "{:foo \"bar\" :lorem \"ipsum\"} => foo=bar&lorem=ipsum"
+  [query-params]
+  (->> query-params
+       (sort-by first)
+       (map  (fn [[k v]]
+               (str (name k) "=" (js/encodeURIComponent v))))
+       (join "&")))
 
 (defn request* [url cb]
   (let [fn-name (gensym "fn")
-        url (format "%s%scallback=%s"
+        url (format "%s%scallback=%s&to-remove=none"
                     url
                     (if (neg? (.indexOf url "?")) "?" "&")
                     fn-name)
@@ -16,7 +28,7 @@
     (aset js/window fn-name
           (fn [res]
             (dommy/remove! script)
-            (cb res)))
+            (cb (js->clj res :keywordize-keys true))))
     (dommy/append! js/document.head script)))
 
 (defn request [url]
@@ -29,17 +41,48 @@
     (dommy/listen! el type #(put! c %))
     c))
 
-;; callback version
-(dommy/listen!
- js/window :click
- (fn []
-   (request*
-    "//api.getprismatic.com/news/home"
-    #(js/console.log %))))
+(defn feed [interest next]
+  (request (format "%s/%s/%s?api-version=1.22&%s"
+                   +api-host+
+                   (:type interest)
+                   (:key interest)
+                   (-> next :query-params map->query-string))))
 
-;; code.async sequential version
-(let [click (listen js/window :click)]
+(defn paginate [interest channel-size]
+  (let [c (chan channel-size)]
+    (go
+     (loop [next {}]
+       (let [res (<! (feed interest next))]
+         (>! c res)
+         (if (or (nil? (:next res))
+                 (< (-> res :next :query-params :first-article-idx)
+                    (-> next :query-params :first-article-idx)))
+           (close! c)
+           (recur (:next res))))))
+    c))
+
+(deftemplate full-screen-article
+  [{:keys [title text images]}]
+  [:.article-container
+   [:.article
+    (when (seq images)
+      [:.article-image
+       {:style {:background-image (format "url('%s')" (-> images first :url))}}])
+    [:h1 title]
+    [:p text]]])
+
+(let [click (listen js/window :click)
+      next-page (paginate {:type "news" :key "home"} 2)]
   (go
-   (while true
-     (<! click)
-     (js/console.log (<! (request "//api.getprismatic.com/news/home"))))))
+   (loop [article-queue []]
+     (let [[article & queue] article-queue]
+       (js/console.log (clj->js article))
+       (if article
+         (do
+           (->> article
+                full-screen-article
+                (dommy/append! js/document.body))
+           (recur queue))
+         (let [articles (:docs (<! next-page))
+               queue (concat queue articles)]
+           (when (seq queue) (recur queue))))))))
